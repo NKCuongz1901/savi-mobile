@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
+import { useAuthStore } from "@/store/auth";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return (
-    <View className="flex-1 items-center justify-center">
-      <Text className="text-2xl font-bold color-red-400">Hello World 2</Text>
-    </View>
-  );
+  const token = useAuthStore((s) => s.token);
+  const isHydrated = useAuthStore((s) => s.isHydrated);
+  if (!isHydrated) return null;
+  return <Redirect href={token ? "/home" : "/login"} />;
 }
