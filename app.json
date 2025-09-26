@@ -9,7 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app uses the microphone for voice input.",
+        "NSSpeechRecognitionUsageDescription": "This app uses speech recognition to convert your voice to text."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +23,11 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "RECORD_AUDIO"
+      ],
+      "package": "com.cuong19012002.savimobile"
     },
     "web": {
       "output": "static",
@@ -38,10 +46,12 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-speech-recognition"
     ],
+    
     "extra": {
-      "API_URL": "http://192.168.1.163:8080/api/v1"
+      "API_URL": "http://192.168.1.226:8080/api/v1"
     },
     "experiments": {
       "typedRoutes": true,

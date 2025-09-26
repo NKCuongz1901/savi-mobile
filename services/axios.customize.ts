@@ -9,8 +9,7 @@ const baseURL: string =
   (Constants?.manifest2 as any)?.extra?.API_URL ||
   "http://localhost:3000";
 
-
-console.log(baseURL);
+console.log("API baseURL →", baseURL);
 
 const api: AxiosInstance = axios.create({
   baseURL,
@@ -31,12 +30,28 @@ api.interceptors.request.use((config) => {
       (config.headers as any)["Authorization"] = `Bearer ${token}`;
     }
   } catch {}
+
+  // DEBUG LOGS
+  (config as any)._ts = Date.now();
+  const method = (config.method ?? "GET").toUpperCase();
+  const fullUrl = `${config.baseURL ?? ""}${config.url ?? ""}`;
+  console.log("HTTP →", method, fullUrl);
+  if (config.params) console.log("Params →", config.params);
+  if (config.data) console.log("Body →", config.data);
+
   return config;
 });
 
 // Response interceptor: standardize errors, auto-logout on 401
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const started = (response.config as any)._ts ?? Date.now();
+    const ms = Date.now() - started;
+    const method = (response.config.method ?? "GET").toUpperCase();
+    const fullUrl = `${response.config.baseURL ?? ""}${response.config.url ?? ""}`;
+    console.log("HTTP ✓", response.status, method, fullUrl, `${ms}ms`);
+    return response;
+  },
   async (error: AxiosError<any>) => {
     const status = error.response?.status;
     if (status === 401) {
@@ -49,6 +64,14 @@ api.interceptors.response.use(
       (error.response?.data as any)?.message ||
       error.message ||
       "Network error";
+
+    // DEBUG LOGS
+    const cfg: any = error.config || {};
+    const method = (cfg.method ?? "GET").toUpperCase();
+    const fullUrl = `${cfg.baseURL ?? ""}${cfg.url ?? ""}`;
+    const started = cfg._ts ?? Date.now();
+    const ms = Date.now() - started;
+    console.log("HTTP ✗", status ?? "NO_STATUS", method, fullUrl, `${ms}ms`, "-", message);
 
     // Show toast for errors
     try {
@@ -65,5 +88,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-
-
